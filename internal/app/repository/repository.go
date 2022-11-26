@@ -22,42 +22,91 @@ func New(dsn string) (*Repository, error) {
 	}, nil
 }
 
-func (r *Repository) GetAllProducts() ([]ds.Goods, error) {
-	var products []ds.Goods
-	result := r.db.Find(&products)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-	return products, nil
+func (r *Repository) CreateObject(object *ds.Objects) error {
+	err := r.db.Create(object).Error
+	return err
 }
 
-func (r *Repository) GetProductByID(id uint) (*ds.Goods, error) {
-	product := &ds.Goods{}
-	err := r.db.First(product, "id_good = ?", id).Error // find product with code D42
+func (r *Repository) GetObjectByFloor(floor uint) ([]ds.Objects, error) {
+	
+	objects := []ds.Objects{}
+	result := r.db.Find(&objects)
+	err := r.db.Find(objects, "floor = ?", floor).Error
 	if err != nil {
 		return nil, err
 	}
-	return product, nil
+	return objects, nil
 }
 
-func (r *Repository) CreateProduct(product *ds.Goods) error {
-	err := r.db.Create(product).Error
+func (r *Repository) GetObjectById(id uint) (*ds.Objects, error) {
+	object := &ds.Objects{}
+	err := r.db.First(object, "id_object = ?", id).Error
+	if err != nil {
+		return nil, err
+	}
+	return object, nil
+}
+
+func (r *Repository) GetFavoriteByID(id_user uint) ([]ds.Favorites, error) {
+	
+	favorites := []ds.Favorites{}
+	result := r.db.Find(&favorites)
+	err := r.db.Find(favorites, "id_user = ?", id_user).Error
+	if err != nil {
+		return nil, err
+	}
+	return favorites, nil
+}
+
+func (r *Repository) CreateFavorite(favorite *ds.Favorites) error {
+	err := r.db.Create(favorite).Error
 	return err
 }
 
-func (r *Repository) ChangeProduct(id uint, new_price uint) error {
-	err := r.db.Model(&ds.Goods{}).Where("id_good = ?", id).Update("price", new_price).Error
-	return err
-}
 
-func (r *Repository) DeleteProduct(id uint) error {
-	err := r.db.First(&ds.Goods{}, "id_good = ?", id).Error
+func (r *Repository) DeleteFavorite(id_favorite uint) error {
+	err := r.db.First(&ds.Favorites{}, "id_favorite = ?", id_favorite).Error
 	if err != nil {
 		return err
 	}
-	err = r.db.Delete(&ds.Goods{}, "id_good = ?", id).Error
+	err = r.db.Delete(&ds.Favorites{}, "id_favorite = ?", id_favorite).Error
 	return err
 }
+
+func (r *Repository) CreateFeedBack(feedback *ds.Feedback) error {
+	err := r.db.Create(feedback).Error
+	return err
+}
+
+
+func (r *Repository) GetFeedbackByID(id_user uint) ([]ds.Feedback, error) {
+	
+	feedback := []ds.Feedback{}
+	result := r.db.Find(&feedback)
+	err := r.db.Find(feedback, "id_user = ?", id_user).Error
+	if err != nil {
+		return nil, err
+	}
+	return feedback, nil
+}
+
+func (r *Repository) GetOccupationByID(id_group uint) ([]ds.Feedback, error) {
+	
+	occupation := []ds.Occupation{}
+	result := r.db.Find(&occupation)
+	err := r.db.Find(occupation, "id_group = ?", id_group).Error
+	if err != nil {
+		return nil, err
+	}
+	return occupation, nil
+}
+
+
+/*func (r *Repository) ChangeProduct(id uint, new_price uint) error {
+	err := r.db.Model(&ds.Goods{}).Where("id_good = ?", id).Update("price", new_price).Error
+	return err
+}
+*/
 
 //Users
 
